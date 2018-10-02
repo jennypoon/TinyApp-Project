@@ -1,0 +1,19 @@
+{
+  "name": "tinyapp-project",
+  "version": "1.0.0",
+  "description": "Week2 Assignment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpoon15/TinyApp-Project.git"
+  },
+  "author": "Jenny Poon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jpoon15/TinyApp-Project/issues"
+  },
+  "homepage": "https://github.com/jpoon15/TinyApp-Project#readme"
+}

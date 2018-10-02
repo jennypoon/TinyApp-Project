@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>TinyApp</title>
+</head>
+<body>
+  <ul>
+    <% for (let indivUrl in urls) { %>
+  <li><%= indivUrl %> - <%= urls[indivUrl] %>
+  <a href='#'>Shorten your link here.</a>
+  </li>
+  <% }; %>
+</ul>
+
+    <!-- Add your EJS code here -->
+</body>
+</html>

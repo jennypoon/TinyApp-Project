@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/jpoon15/TinyApp-Project/issues"
   },
-  "homepage": "https://github.com/jpoon15/TinyApp-Project#readme"
+  "homepage": "https://github.com/jpoon15/TinyApp-Project#readme",
+  "dependencies": {
+    "ejs": "^2.6.1"
+  }
 }

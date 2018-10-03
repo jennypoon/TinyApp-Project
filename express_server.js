@@ -55,7 +55,15 @@ app.get("/urls/:id", (req, res) => {
   };
   res.render("urls_show", templateVars);
 });
-//when receive urls, add
+
+//short url redirect to long URL
+app.get("/u/:shortURL", (req, res) => {
+  let shortURL = req.params.shortURL;
+  let longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
+});
+
+//when receive urls, should add to database and redirect
 app.post("/urls", (req, res) => {
   let newIDNum = generateRandomString();
   urlDatabase[newIDNum] = {

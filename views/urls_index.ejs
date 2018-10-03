@@ -6,11 +6,15 @@
 <body>
   <% include partials/_header %>
   <ul>
-    <% for (let indivUrl in urls) { %>
-  <li><%= indivUrl %> - <%= urls[indivUrl] %>
-  <a href='#'>Shorten your link here.</a>
-  </li>
-  <% }; %>
+    <div>
+      <% for (let indivUrl in urls) { %>
+    <li><%= indivUrl %> -> <a href=<%= urls[indivUrl] %>><%= urls[indivUrl] %></a>
+      <form method="POST" style="display:inline;" action="/urls/<%= indivUrl %>/delete">
+        <button>Delete Link</button>
+      </form>
+    </li>
+    <% }; %>
+  </div>
 </ul>
 
     <!-- Add your EJS code here -->

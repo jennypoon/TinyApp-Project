@@ -1,6 +1,16 @@
 var express = require("express");
+var cookieParser = require('cookie-parser')
 var app = express(); //server
 var PORT = 8080; // default port 8080
+
+//required for cookie
+app.use(cookieParser())
+
+//required for POST method
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+
+app.set("view engine", "ejs"); //look in view dir for ejs files
 
 //===Random Number Generator
 function generateRandomString() {
@@ -13,11 +23,6 @@ let randomNum = "";
 return randomNum;
 }
 
-//required for POST method
-const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true}));
-
-app.set("view engine", "ejs"); //look in view dir for ejs files
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -82,6 +87,16 @@ app.post("/urls/:id", (req, res) => {
   console.log[urlDatabase];
   res.redirect("../urls");
 });
+
+//login information
+app.post("/login", (req, res) => {
+  //create a cookie
+  let key = Object.keys(req.body)
+  let loginName = req.body[key];
+  console.log(loginName);
+  res.cookie("username", loginName).redirect("../urls");
+});
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);

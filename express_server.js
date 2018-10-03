@@ -4,10 +4,10 @@ var PORT = 8080; // default port 8080
 
 //===Random Number Generator
 function generateRandomString() {
-var randomNum = "";
-  var source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+let randomNum = "";
+  const source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  for (var i = 0; i < 6; i++) {
+  for (let i = 0; i < 6; i++) {
     randomNum += source.charAt(Math.floor(Math.random() * source.length));
   }
 return randomNum;
@@ -19,14 +19,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs"); //look in view dir for ejs files
 
-var urlDatabase = {
+const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
-
-// app.get("/", (req, res) => {
-//   res.send("Hello!");
-// });
+//Root Page
+app.get("/", (req, res) => {
+  res.send("Hello!");
+});
 
 // app.get("/urls.json", (req, res) => {
 //   res.json(urlDatabase);
@@ -37,17 +37,17 @@ var urlDatabase = {
 //   res.render("hello_world", templateVars);
 // });
 
-//for /urls, display Database
+//Main Page - display Database
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
-//for urls/new - form to enter new urls
+//Creating New Link
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
-//when given id, show short and long url
+//Specific ID
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id ,
@@ -63,17 +63,24 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-//when receive urls, should add to database and redirect
+//Create new item in Database
 app.post("/urls", (req, res) => {
   let newIDNum = generateRandomString();
   urlDatabase[newIDNum] = req.body.longURL; //long URL from request body
   res.redirect("urls/" + newIDNum);
 });
 
+//Delete URL from Database
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
-  console.log(urlDatabase)
   res.redirect("/urls");
+});
+
+//Update URL
+app.post("/urls/:id", (req, res) => {
+  urlDatabase[req.params.id] = [req.body.newURL]
+  console.log[urlDatabase];
+  res.redirect("../urls");
 });
 
 app.listen(PORT, () => {

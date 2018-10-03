@@ -68,9 +68,12 @@ app.post("/urls", (req, res) => {
   let newIDNum = generateRandomString();
   urlDatabase[newIDNum] = req.body.longURL; //long URL from request body
   res.redirect("urls/" + newIDNum);
+});
 
-  // console.log(req.body);  // debug statement to see POST parameters
-  // res.send("Ok");         // Respond with 'Ok' (we will replace this)
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id];
+  console.log(urlDatabase)
+  res.redirect("/urls");
 });
 
 app.listen(PORT, () => {

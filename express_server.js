@@ -2,6 +2,18 @@ var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
 
+//===Random Number Generator
+function generateRandomString() {
+var randomNum = "";
+  var source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < 6; i++) {
+    randomNum += source.charAt(Math.floor(Math.random() * source.length));
+  }
+return randomNum;
+}
+
+//required for POST method
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -25,15 +37,17 @@ app.get("/hello", (req, res) => {
   res.render("hello_world", templateVars);
 });
 
+//for /urls, display Database
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
+//for urls/new - form to enter new urls
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
-
+//when given id, show short and long url
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id ,
@@ -41,8 +55,14 @@ app.get("/urls/:id", (req, res) => {
   };
   res.render("urls_show", templateVars);
 });
-
+//when receive urls, add
 app.post("/urls", (req, res) => {
+  let newIDNum = generateRandomString();
+  urlDatabase[newIDNum] = {
+      longURL: req.body.longURL //long URL from request body
+  }
+  res.redirect("urls/" + newIDNum)
+
   console.log(req.body);  // debug statement to see POST parameters
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });

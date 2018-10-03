@@ -44,19 +44,27 @@ app.get("/", (req, res) => {
 
 //Main Page - display Database
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = {
+    urls: urlDatabase,
+    username: req.cookies["username"]
+    };
   res.render("urls_index", templateVars);
 });
 
 //Creating New Link
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = {
+    username: req.cookies["username"]
+  }
+  res.render("urls_new", templateVars)
+  res.redirect("/urls");
 });
 //Specific ID
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id ,
-    longURL: urlDatabase[req.params.id]
+    longURL: urlDatabase[req.params.id],
+    username: req.cookies["username"]
   };
   res.render("urls_show", templateVars);
 });
@@ -84,7 +92,6 @@ app.post("/urls/:id/delete", (req, res) => {
 //Update URL
 app.post("/urls/:id", (req, res) => {
   urlDatabase[req.params.id] = [req.body.newURL]
-  console.log[urlDatabase];
   res.redirect("../urls");
 });
 
@@ -93,7 +100,6 @@ app.post("/login", (req, res) => {
   //create a cookie
   let key = Object.keys(req.body)
   let loginName = req.body[key];
-  console.log(loginName);
   res.cookie("username", loginName).redirect("../urls");
 });
 

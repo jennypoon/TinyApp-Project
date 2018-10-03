@@ -9,6 +9,7 @@
     <div>
       <% for (let indivUrl in urls) { %>
     <li><%= indivUrl %> -> <a href=<%= urls[indivUrl] %>><%= urls[indivUrl] %></a>
+      <a href="/urls/<%= indivUrl %>">Edit Link</a>
       <form method="POST" style="display:inline;" action="/urls/<%= indivUrl %>/delete">
         <button>Delete Link</button>
       </form>

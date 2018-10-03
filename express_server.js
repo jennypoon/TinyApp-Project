@@ -1,5 +1,5 @@
 var express = require("express");
-var app = express();
+var app = express(); //server
 var PORT = 8080; // default port 8080
 
 //===Random Number Generator
@@ -24,18 +24,18 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
+// app.get("/", (req, res) => {
+//   res.send("Hello!");
+// });
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
+// app.get("/urls.json", (req, res) => {
+//   res.json(urlDatabase);
+// });
 
-app.get("/hello", (req, res) => {
-  let templateVars = { greeting: 'Hello World!'} ;
-  res.render("hello_world", templateVars);
-});
+// app.get("/hello", (req, res) => {
+//   let templateVars = { greeting: 'Hello World!'} ;
+//   res.render("hello_world", templateVars);
+// });
 
 //for /urls, display Database
 app.get("/urls", (req, res) => {
@@ -66,13 +66,11 @@ app.get("/u/:shortURL", (req, res) => {
 //when receive urls, should add to database and redirect
 app.post("/urls", (req, res) => {
   let newIDNum = generateRandomString();
-  urlDatabase[newIDNum] = {
-      longURL: req.body.longURL //long URL from request body
-  }
-  res.redirect("urls/" + newIDNum)
+  urlDatabase[newIDNum] = req.body.longURL; //long URL from request body
+  res.redirect("urls/" + newIDNum);
 
-  console.log(req.body);  // debug statement to see POST parameters
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  // console.log(req.body);  // debug statement to see POST parameters
+  // res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
 app.listen(PORT, () => {

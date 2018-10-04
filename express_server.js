@@ -23,7 +23,6 @@ let randomNum = "";
 return randomNum;
 }
 
-
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -32,6 +31,19 @@ const urlDatabase = {
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
+
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+}
 
 // app.get("/urls.json", (req, res) => {
 //   res.json(urlDatabase);
@@ -75,6 +87,13 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+//Registration
+app.get("/register", (req, res) => {
+  // let email = req.params.email;
+  // let password = req.parms.password;
+  res.render("register");
+});
+
 //Create new item in Database
 app.post("/urls", (req, res) => {
   let newIDNum = generateRandomString();
@@ -105,6 +124,14 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   res.clearCookie('username')
   res.redirect("/urls");
+});
+
+//Registration
+app.post("/register", (req, res) => {
+  console.log(req.body)
+  let email = req.body[email]
+  console.log(email)
+  // res.redirect("/urls");
 });
 
 app.listen(PORT, () => {

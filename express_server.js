@@ -56,8 +56,7 @@ app.get("/urls/new", (req, res) => {
   let templateVars = {
     username: req.cookies["username"]
   }
-  res.render("urls_new", templateVars)
-  res.redirect("/urls");
+  res.render("urls_new", templateVars);
 });
 //Specific ID
 app.get("/urls/:id", (req, res) => {
@@ -102,7 +101,11 @@ app.post("/login", (req, res) => {
   let loginName = req.body[key];
   res.cookie("username", loginName).redirect("../urls");
 });
-
+//logging out
+app.post("/logout", (req, res) => {
+  res.clearCookie('username')
+  res.redirect("/urls");
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);

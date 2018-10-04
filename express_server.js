@@ -12,16 +12,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs"); //look in view dir for ejs files
 
-//===Random Number Generator
-function generateRandomString() {
-let randomNum = "";
-  const source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  for (let i = 0; i < 6; i++) {
-    randomNum += source.charAt(Math.floor(Math.random() * source.length));
-  }
-return randomNum;
-}
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -44,7 +35,27 @@ const users = {
     password: "dishwasher-funk"
   }
 }
-console.log(users);
+
+//===Registration Check
+function regCheck(email) {
+  for(newUserNum in users) {
+    if (email === users[newUserNum]['email']){
+      return true
+    }
+  } return false
+}
+console.log(regCheck('user2@example.com'))
+console.log(regCheck('example@example.com'))
+//===Random Number Generator
+function generateRandomString() {
+let randomNum = "";
+  const source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (let i = 0; i < 6; i++) {
+    randomNum += source.charAt(Math.floor(Math.random() * source.length));
+  }
+return randomNum;
+}
 // app.get("/urls.json", (req, res) => {
 //   res.json(urlDatabase);
 // });
@@ -131,21 +142,22 @@ app.post("/logout", (req, res) => {
 
 //Registration - Save User to Database
 app.post("/register", (req, res) => {
-  console.log(req.body);
   let email = req.body.email;
   let password = req.body.password;
   let newUserNum = generateRandomString();
+  res.cookie("newUserID", newUserNum);
+
   if (email === "" || password === "") {
     res.status(400).send('Error 400: Missing Registration Details');
-  } else if (email === users[newUserNum][email]) {
+  } else if (regCheck(req.body.email)) {
     res.status(400).send('Error 400: User already exist');
-  }
-    res.cookie("newUserID", newUserNum); //Cookie has a different name
+  } else {
     users[newUserNum] = {
       id: newUserNum,
       email: email,
       password: password
     };
+  }
     res.redirect("/urls");
 });
 

@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>ID: Short URL and Long URL</title>
-</head>
 <body>
   <% include partials/_header %>
-  <ul>
-    <h2>ShortURL: <%= shortURL %> </h2>
+  <h1>ShortURL: <%= shortURL %> </h1>
   <form action="/urls/<%= shortURL %>" method="POST">
     <label for="newlongURL">Update URL:</label>
     <input id="newlongURL" type="text" name="newURL" placeholder=" <%= longURL %>" style="width: 300px">

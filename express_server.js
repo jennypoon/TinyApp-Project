@@ -44,7 +44,7 @@ const users = {
     password: "dishwasher-funk"
   }
 }
-
+console.log(users);
 // app.get("/urls.json", (req, res) => {
 //   res.json(urlDatabase);
 // });
@@ -56,11 +56,12 @@ const users = {
 
 //Main Page - display Database
 app.get("/urls", (req, res) => {
+  username = req.cookies["newUserID"];
+
   let templateVars = {
     urls: urlDatabase,
-    username: req.cookies["username"]
-    };
-    console.log(username);
+    username: username
+  };
   res.render("urls_index", templateVars);
 });
 
@@ -108,7 +109,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 //Update URL
 app.post("/urls/:id", (req, res) => {
-  urlDatabase[req.params.id] = [req.body.newURL]
+  urlDatabase[req.params.id] = [req.body.newURL];
   res.redirect("../urls");
 });
 
@@ -119,26 +120,33 @@ app.post("/login", (req, res) => {
   //console.log(req.body[username]); can't access username
   let key = Object.keys(req.body)
   let loginName = req.body[key];
-  res.cookie("username", loginName)
+  res.cookie("username", loginName);
   res.redirect("../urls");
 });
 //logging out
 app.post("/logout", (req, res) => {
-  res.clearCookie('username')
+  res.clearCookie('username');
   res.redirect("/urls");
 });
 
 //Registration - Save User to Database
 app.post("/register", (req, res) => {
+  console.log(req.body);
+  let email = req.body.email;
+  let password = req.body.password;
   let newUserNum = generateRandomString();
-  res.cookie("newUserID", newUserNum); //Cookie has a different name
-  users[newUserNum] = {
-    id: newUserNum,
-    email: req.body.email,
-    password: req.body.password
-  };
-   username: req.cookies["username"]
-  res.redirect("/urls");
+  if (email === "" || password === "") {
+    res.status(400).send('Error 400: Missing Registration Details');
+  } else if (email === users[newUserNum][email]) {
+    res.status(400).send('Error 400: User already exist');
+  }
+    res.cookie("newUserID", newUserNum); //Cookie has a different name
+    users[newUserNum] = {
+      id: newUserNum,
+      email: email,
+      password: password
+    };
+    res.redirect("/urls");
 });
 
 app.listen(PORT, () => {

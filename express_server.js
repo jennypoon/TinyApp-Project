@@ -89,8 +89,6 @@ app.get("/u/:shortURL", (req, res) => {
 
 //Registration
 app.get("/register", (req, res) => {
-  // let email = req.params.email;
-  // let password = req.parms.password;
   res.render("register");
 });
 
@@ -116,9 +114,12 @@ app.post("/urls/:id", (req, res) => {
 //login information
 app.post("/login", (req, res) => {
   //create a cookie
+  console.log(req.body);
+  //console.log(req.body[username]); can't access username
   let key = Object.keys(req.body)
   let loginName = req.body[key];
-  res.cookie("username", loginName).redirect("../urls");
+  res.cookie("username", loginName)
+  res.redirect("../urls");
 });
 //logging out
 app.post("/logout", (req, res) => {
@@ -126,12 +127,16 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls");
 });
 
-//Registration
+//Registration - Save User to Database
 app.post("/register", (req, res) => {
-  console.log(req.body)
-  let email = req.body[email]
-  console.log(email)
-  // res.redirect("/urls");
+  let newUserNum = generateRandomString();
+  res.cookie("newUserID", newUserNum); //Cookie has a different name
+  users[newUserNum] = {
+    id: newUserNum,
+    email: req.body.email,
+    password: req.body.password
+  };
+  res.redirect("/urls");
 });
 
 app.listen(PORT, () => {

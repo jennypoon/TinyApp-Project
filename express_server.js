@@ -60,6 +60,7 @@ app.get("/urls", (req, res) => {
     urls: urlDatabase,
     username: req.cookies["username"]
     };
+    console.log(username);
   res.render("urls_index", templateVars);
 });
 
@@ -136,6 +137,7 @@ app.post("/register", (req, res) => {
     email: req.body.email,
     password: req.body.password
   };
+   username: req.cookies["username"]
   res.redirect("/urls");
 });
 

@@ -13,7 +13,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs"); //look in view dir for ejs files
 
 
-
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -44,8 +43,7 @@ function regCheck(email) {
     }
   } return false
 }
-console.log(regCheck('user2@example.com'))
-console.log(regCheck('example@example.com'))
+
 //===Random Number Generator
 function generateRandomString() {
 let randomNum = "";
@@ -67,7 +65,7 @@ return randomNum;
 
 //Main Page - display Database
 app.get("/urls", (req, res) => {
-  username = req.cookies["newUserID"];
+  username = req.cookies["user_id"];
 
   let templateVars = {
     urls: urlDatabase,
@@ -79,7 +77,7 @@ app.get("/urls", (req, res) => {
 //Creating New Link
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"]
+    username: req.cookies["user_id"]
   }
   res.render("urls_new", templateVars);
 });
@@ -88,21 +86,14 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id ,
     longURL: urlDatabase[req.params.id],
-    username: req.cookies["username"]
+    username: req.cookies["user_id"]
   };
   res.render("urls_show", templateVars);
 });
 
 //short url redirect to long URL
-app.get("/u/:shortURL", (req, res) => {
-  let shortURL = req.params.shortURL;
-  let longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL);
-});
-
-//Registration
-app.get("/register", (req, res) => {
-  res.render("register");
+app.get("/login", (req, res) => {
+  res.render("login");
 });
 
 //Create new item in Database
@@ -124,28 +115,40 @@ app.post("/urls/:id", (req, res) => {
   res.redirect("../urls");
 });
 
-//login information
+//Login
+app.get("/login", (req, res) => {
+  let shortURL = req.params.shortURL;
+  let longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
+});
+
+
 app.post("/login", (req, res) => {
   //create a cookie
   console.log(req.body);
   //console.log(req.body[username]); can't access username
   let key = Object.keys(req.body)
   let loginName = req.body[key];
-  res.cookie("username", loginName);
+  res.cookie("user_id", loginName);
   res.redirect("../urls");
 });
 //logging out
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect("/urls");
 });
 
 //Registration - Save User to Database
+
+app.get("/register", (req, res) => {
+  res.render("register");
+});
+
 app.post("/register", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
   let newUserNum = generateRandomString();
-  res.cookie("newUserID", newUserNum);
+  res.cookie("user_id", newUserNum);
 
   if (email === "" || password === "") {
     res.status(400).send('Error 400: Missing Registration Details');

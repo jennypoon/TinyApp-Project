@@ -14,9 +14,18 @@ app.set("view engine", "ejs"); //look in view dir for ejs files
 
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
-};
+  "b2xVn2": {
+    shortURL: "b2xVn2",
+    longURL: "http://www.lighthouselabs.ca",
+    createdBy: "userID"
+  },
+  "9sm5xK": {
+    shortURL: "9sm5xK",
+    longURL: "http://www.google.com",
+    createdBy: "userID"
+  }
+}
+
 //Root Page
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -89,8 +98,7 @@ app.get("/urls/new", (req, res) => {
 //Specific ID
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
-    shortURL: req.params.id ,
-    longURL: urlDatabase[req.params.id],
+    urlData: urlDatabase[req.params.id],
     userObj: users[req.cookies["user_id"]]
   };
   res.render("urls_show", templateVars);
@@ -99,7 +107,7 @@ app.get("/urls/:id", (req, res) => {
 //short url redirect to long URL
 app.get("/u/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
-  let longURL = urlDatabase[req.params.shortURL];
+  let longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
@@ -107,7 +115,15 @@ app.get("/u/:shortURL", (req, res) => {
 //Create new item in Database
 app.post("/urls", (req, res) => {
   let newIDNum = generateRandomString();
-  urlDatabase[newIDNum] = req.body.longURL; //long URL from request body
+  urlDatabase[newIDNum] = {
+    shortURL: newIDNum,
+    longURL: req.body.longURL,
+    createdBy: req.cookies["user_id"]
+  }
+
+  console.log(urlDatabase)
+  // urlDatabase['newIDNum'] = req.body.longURL; //long URL from request body
+  // res.redirect("urls/" + newIDNum);
   res.redirect("urls/" + newIDNum);
 });
 
@@ -117,10 +133,10 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls");
 });
 
-//Update URL
+//Updating URL
 app.post("/urls/:id", (req, res) => {
-  urlDatabase[req.params.id] = [req.body.newURL];
-  res.redirect("../urls");
+  urlDatabase[req.params.id].longURL = [req.body.newURL];
+  res.redirect("/urls");
 });
 
 //Login
@@ -153,7 +169,6 @@ app.post("/logout", (req, res) => {
 });
 
 //Registration - Save User to Database
-
 app.get("/register", (req, res) => {
   res.render("register");
 });
@@ -178,6 +193,7 @@ app.post("/register", (req, res) => {
     res.redirect("/urls");
 });
 
+//PORT
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });

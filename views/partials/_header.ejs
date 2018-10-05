@@ -5,10 +5,16 @@
     <h1>Tiny App Project</h1>
     </header>
       <hr width="600px" align="left">
+    <!-- User logged In -->
+      <% if (username !== undefined) { %>
         <form action ="/logout" method="POST">
           <i>You are currently logged in as: <%= username %></i>
           <button> Logout </button> <br>
         </form>
+      <% } else { %>
+        <a href="/register"> Register </a>
+        <a href="/login"> Login </a>
+      <% }; %>
       <hr width="600px" align="left">
   </body>
 </html>

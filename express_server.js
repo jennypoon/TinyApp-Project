@@ -22,7 +22,7 @@ const urlDatabase = {
   "9sm5xK": {
     shortURL: "9sm5xK",
     longURL: "http://www.google.com",
-    createdBy: "userID"
+    createdBy: "userID2"
   }
 }
 
@@ -52,16 +52,16 @@ function regCheck(email) {
     }
   } return false
 }
-//== Checking if User in Database
-//Browser Cookie === database URL
-// function userChecker(req) {
-//   for (user in users) {
-//     if (req.cookies["user_id"] === users[user].id) {
-//       return true;
-//     }
-//   } return false
-// }
-// console.log(userChecker("user2RandomID"));
+// == Checking if User in Database
+function urlsForUser(id) {
+  let filteredDatabase = {};
+  for (url in urlDatabase) {
+    if (id === urlDatabase[url]['createdBy']) {
+      filteredDatabase[url] = urlDatabase[url];
+    }
+  } return filteredDatabase;
+}
+console.log(urlsForUser('userID'))
 
 //===Random Number Generator
 function generateRandomString() {
@@ -120,11 +120,10 @@ app.post("/urls", (req, res) => {
     longURL: req.body.longURL,
     createdBy: req.cookies["user_id"]
   }
-
   console.log(urlDatabase)
   // urlDatabase['newIDNum'] = req.body.longURL; //long URL from request body
   // res.redirect("urls/" + newIDNum);
-  res.redirect("urls/" + newIDNum);
+  res.redirect("urls/");
 });
 
 //Delete URL from Database

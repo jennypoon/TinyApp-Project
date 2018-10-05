@@ -65,11 +65,9 @@ return randomNum;
 
 //Main Page - display Database
 app.get("/urls", (req, res) => {
-  username = req.cookies["user_id"];
-
   let templateVars = {
     urls: urlDatabase,
-    username: username
+    username: req.cookies["user_id"]
   };
   res.render("urls_index", templateVars);
 });

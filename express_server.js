@@ -43,7 +43,11 @@ function regCheck(email) {
     }
   } return false
 }
-
+// //== Checking Cookie in Database
+// function cookieCheck() {
+//   for (let user in users) {
+//     if (cookie == userID)
+//   }
 
 
 //===Random Number Generator
@@ -56,37 +60,37 @@ let randomNum = "";
   }
 return randomNum;
 }
-// app.get("/urls.json", (req, res) => {
-//   res.json(urlDatabase);
-// });
-
-// app.get("/hello", (req, res) => {
-//   let templateVars = { greeting: 'Hello World!'} ;
-//   res.render("hello_world", templateVars);
-// });
 
 //Main Page - display Database
 app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    username: req.cookies["user_id"]
+    userObj: users[req.cookies["user_id"]]
   };
   res.render("urls_index", templateVars);
 });
 
 //Creating New Link
 app.get("/urls/new", (req, res) => {
+  //check if client is login
   let templateVars = {
-    username: req.cookies["user_id"]
+    userObj: users[req.cookies["user_id"]]
   }
   res.render("urls_new", templateVars);
+
+
+
+// } res.status(400).send('Error: You are not authorized, Please <a href="/login"> Login </a>');
+
+
 });
+
 //Specific ID
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id ,
     longURL: urlDatabase[req.params.id],
-    username: req.cookies["user_id"]
+    userObj: users[req.cookies["user_id"]]
   };
   res.render("urls_show", templateVars);
 });
@@ -127,9 +131,6 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   console.log("login", users);
-// console.log(req.body);
-// console.log(req.body.email);
-// console.log(req.body.password);
   if (email === "" || password === "") {
     res.status(403).send('Error: Missing Login Details');
     return;

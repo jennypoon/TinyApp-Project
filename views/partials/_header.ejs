@@ -6,9 +6,9 @@
     </header>
       <hr width="600px" align="left">
     <!-- User logged In -->
-      <% if (username !== undefined) { %>
+      <% if (userObj) { %>
         <form action ="/logout" method="POST">
-          <i>You are currently logged in as: <%= username %></i>
+          <i>You are currently logged in as: <%= userObj.email %></i>
           <button> Logout </button> <br>
         </form>
       <% } else { %>

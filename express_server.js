@@ -35,7 +35,7 @@ const users = {
   }
 }
 
-//===Registration Check
+//===Email Check
 function regCheck(email) {
   for(newUserNum in users) {
     if (email === users[newUserNum]['email']){
@@ -43,6 +43,8 @@ function regCheck(email) {
     }
   } return false
 }
+
+
 
 //===Random Number Generator
 function generateRandomString() {
@@ -90,9 +92,12 @@ app.get("/urls/:id", (req, res) => {
 });
 
 //short url redirect to long URL
-app.get("/login", (req, res) => {
-  res.render("login");
+app.get("/u/:shortURL", (req, res) => {
+  let shortURL = req.params.shortURL;
+  let longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
 });
+
 
 //Create new item in Database
 app.post("/urls", (req, res) => {
@@ -115,21 +120,31 @@ app.post("/urls/:id", (req, res) => {
 
 //Login
 app.get("/login", (req, res) => {
-  let shortURL = req.params.shortURL;
-  let longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL);
+  res.render("login");
 });
-
 
 app.post("/login", (req, res) => {
-  //create a cookie
-  console.log(req.body);
-  //console.log(req.body[username]); can't access username
-  let key = Object.keys(req.body)
-  let loginName = req.body[key];
-  res.cookie("user_id", loginName);
-  res.redirect("../urls");
+  const email = req.body.email;
+  const password = req.body.password;
+  console.log("login", users);
+// console.log(req.body);
+// console.log(req.body.email);
+// console.log(req.body.password);
+  if (email === "" || password === "") {
+    res.status(403).send('Error: Missing Login Details');
+    return;
+  } else {
+    for (let user in users) {
+      // console.log(users[user].email)
+      if (users[user].email === email && users[user].password === password) {
+        res.cookie("user_id", users[user].id).redirect('/urls');
+        return;
+      }
+    }
+    res.status(403).send('Error - User and Password does not match');
+  }
 });
+
 //logging out
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
@@ -159,6 +174,7 @@ app.post("/register", (req, res) => {
       password: password
     };
   }
+    // console.log(users);
     res.redirect("/urls");
 });
 

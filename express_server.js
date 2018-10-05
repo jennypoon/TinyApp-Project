@@ -101,11 +101,15 @@ app.get("/urls/new", (req, res) => {
 
 //Specific ID
 app.get("/urls/:id", (req, res) => {
+  if (req.cookies["user_id"]) {
   let templateVars = {
     urlData: urlDatabase[req.params.id],
     userObj: users[req.cookies["user_id"]]
   };
   res.render("urls_show", templateVars);
+  } else {
+    res.send('Error: You are not authorized, please <a href="/login"> Login </a> or <a href="/register"> Register </a>');
+  }
 });
 
 //short url redirect to long URL

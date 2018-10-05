@@ -76,11 +76,15 @@ return randomNum;
 
 //Main Page - display Database
 app.get("/urls", (req, res) => {
-  let templateVars = {
-    urls: urlDatabase,
-    userObj: users[req.cookies["user_id"]]
-  };
-  res.render("urls_index", templateVars);
+  if (req.cookies["user_id"]) {
+    let templateVars = {
+      urls: urlsForUser(req.cookies["user_id"]),
+      userObj: users[req.cookies["user_id"]]
+    };
+    res.render("urls_index", templateVars);
+  } else {
+    res.send('Error: You are not authorized, please <a href="/login"> Login </a> or <a href="/register"> Register </a>')
+  }
 });
 
 //Creating New Link
@@ -91,7 +95,7 @@ app.get("/urls/new", (req, res) => {
     }
     res.render("urls_new", templateVars);
   } else {
-    res.send('Error: You are not authorized, Please <a href="/login"> Login </a>');
+    res.send('Error: You are not authorized, please <a href="/login"> Login </a> or <a href="/register"> Register </a>');
   }
 });
 

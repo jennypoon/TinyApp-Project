@@ -1,5 +1,6 @@
 var express = require("express");
 var cookieParser = require('cookie-parser')
+const bcrypt = require('bcrypt');
 var app = express(); //server
 var PORT = 8080; // default port 8080
 

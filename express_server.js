@@ -43,12 +43,16 @@ function regCheck(email) {
     }
   } return false
 }
-// //== Checking Cookie in Database
-// function cookieCheck() {
-//   for (let user in users) {
-//     if (cookie == userID)
-//   }
-
+//== Checking if User in Database
+//Browser Cookie === database URL
+// function userChecker(req) {
+//   for (user in users) {
+//     if (req.cookies["user_id"] === users[user].id) {
+//       return true;
+//     }
+//   } return false
+// }
+// console.log(userChecker("user2RandomID"));
 
 //===Random Number Generator
 function generateRandomString() {
@@ -72,17 +76,14 @@ app.get("/urls", (req, res) => {
 
 //Creating New Link
 app.get("/urls/new", (req, res) => {
-  //check if client is login
-  let templateVars = {
-    userObj: users[req.cookies["user_id"]]
+  if (req.cookies["user_id"]) {
+    let templateVars = {
+      userObj: users[req.cookies["user_id"]]
+    }
+    res.render("urls_new", templateVars);
+  } else {
+    res.send('Error: You are not authorized, Please <a href="/login"> Login </a>');
   }
-  res.render("urls_new", templateVars);
-
-
-
-// } res.status(400).send('Error: You are not authorized, Please <a href="/login"> Login </a>');
-
-
 });
 
 //Specific ID
@@ -136,7 +137,6 @@ app.post("/login", (req, res) => {
     return;
   } else {
     for (let user in users) {
-      // console.log(users[user].email)
       if (users[user].email === email && users[user].password === password) {
         res.cookie("user_id", users[user].id).redirect('/urls');
         return;
@@ -146,7 +146,7 @@ app.post("/login", (req, res) => {
   }
 });
 
-//logging out
+//Logout
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
   res.redirect("/urls");
@@ -175,7 +175,6 @@ app.post("/register", (req, res) => {
       password: password
     };
   }
-    // console.log(users);
     res.redirect("/urls");
 });
 

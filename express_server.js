@@ -1,10 +1,11 @@
+//MIDDLEWARE
 var express = require("express");
 var cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-var app = express(); //server
-var PORT = 8080; // default port 8080
+var app = express();
+var PORT = 8080;
 
-//Cookie
+//COOKIE
 app.use(cookieSession({
   name: 'session',
   keys: ['happy-days']
@@ -14,9 +15,9 @@ app.use(cookieSession({
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.set("view engine", "ejs"); //look in view dir for ejs files
+app.set("view engine", "ejs");
 
-
+//DATABASES
 const urlDatabase = {
   "b2xVn2": {
     shortURL: "b2xVn2",
@@ -43,7 +44,7 @@ const users = {
   }
 }
 
-//===Email Check
+//=== VERIFICATION - check email in database
 function regCheck(email) {
   for(newUserNum in users) {
     if (email === users[newUserNum]['email']){
@@ -52,18 +53,7 @@ function regCheck(email) {
   } return false
 }
 
-// == Filter user specific URLs
-function urlsForUser(id) {
-  let filteredUrlDatabase = {};
-  for (url in urlDatabase) {
-    if (id === urlDatabase[url]['createdBy']) {
-      filteredUrlDatabase[url] = urlDatabase[url];
-    }
-  } return filteredUrlDatabase;
-}
-console.log(urlsForUser('userID'))
-
-//===Check Cookie = User
+//=== VERIFICATION - Check cookie match User ID
 function userCookieVerify(cookie) {
   for (user in users) {
     if (cookie == users[user]['id']) {
@@ -72,7 +62,17 @@ function userCookieVerify(cookie) {
   } return false;
 }
 
-//===Random Number Generator
+//=== Filtered User-Specific URL Database
+function urlsForUser(id) {
+  let filteredUrlDatabase = {};
+  for (url in urlDatabase) {
+    if (id === urlDatabase[url]['createdBy']) {
+      filteredUrlDatabase[url] = urlDatabase[url];
+    }
+  } return filteredUrlDatabase;
+}
+
+//=== RANDOM NUMBER GENERATOR
 function generateRandomString() {
 let randomNum = "";
   const source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -83,21 +83,27 @@ let randomNum = "";
 return randomNum;
 }
 
-//Root Page
+//ROOT PAGE
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  if (userCookieVerify(req.session.user_id)) {
+    res.redirect("urls/");
+    return;
+  } res.redirect("/login");
 });
 
-//MAIN PAGE - DISPLAY FILTERED DATABASE
+//HOME PAGE - DISPLAY FILTERED DATABASE
 app.get("/urls", (req, res) => {
-  if (userCookieVerify(req.session.user_id)) {
-    let templateVars = {
-      urls: urlsForUser(req.session.user_id),
-      userObj: users[req.session.user_id]
+  let templateVars = {
+    urls: urlsForUser(req.session.user_id),
+    userObj: users[req.session.user_id]
     };
+
+  if (userCookieVerify(req.session.user_id)) {
     res.render("urls_index", templateVars);
+    return;
   } else {
-    res.send('Error: You are not authorized, please <a href="/login"> Login </a> or <a href="/register"> Register </a>')
+    res.render("urls_index", templateVars);
+    return;
   }
 });
 
@@ -108,49 +114,58 @@ app.get("/urls/new", (req, res) => {
       userObj: users[req.session.user_id]
     }
     res.render("urls_new", templateVars);
+    return;
   } else {
-    res.send('Error: You are not authorized, please <a href="/login"> Login </a> or <a href="/register"> Register </a>');
+    res.send('Error: No Authorization. Please <a href="/login"> Login </a> or <a href="/register"> Register </a>');
+    return;
   }
 });
 
 //UPDATING LONG URL
 app.get("/urls/:id", (req, res) => {
   if (userCookieVerify(req.session.user_id)) {
-  let templateVars = {
-    urlData: urlDatabase[req.params.id],
-    userObj: users[req.session.user_id]
-  };
-  res.render("urls_show", templateVars);
+    let templateVars = {
+      urlData: urlDatabase[req.params.id],
+      userObj: users[req.session.user_id]
+   };
+    res.render("urls_show", templateVars);
+    return;
   } else {
-    res.send('Error: You are not authorized, please <a href="/login"> Login </a> or <a href="/register"> Register </a>');
+    res.send('Error: No Authorization. Please <a href="/login"> Login </a> or <a href="/register"> Register </a>');
+    return;
   }
 });
 
 app.post("/urls/:id", (req, res) => {
-  urlDatabase[req.params.id].longURL = [req.body.newURL];
-  res.redirect("/urls");
+  if (!req.body.newURL) {
+    res.send('Error: Oops! You forgot to type something! Go <a href="/urls">back </a>');
+    return;
+  } else {
+    urlDatabase[req.params.id].longURL = [req.body.newURL];
+    res.redirect("/urls");
+  }
 });
 
-//Short URL redirect to Long URL
+//SHORT LINK REDIRECT TO LONG LINK - For Sharing, not actively used
 app.get("/u/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
-  let longURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longURL);
+  res.redirect(urlDatabase[shortURL]['longURL']);
 });
 
 
 //CREATE A NEW LINK
 app.post("/urls", (req, res) => {
+  if (!req.body.longURL) {
+    res.send('Error: Oops! You forgot to type something! Go <a href="/urls/new">back </a>');
+    return;
+  }
   let newIDNum = generateRandomString();
   urlDatabase[newIDNum] = {
     shortURL: newIDNum,
     longURL: req.body.longURL,
     createdBy: req.session.user_id
-  }
-  // console.log(urlDatabase)
-  // urlDatabase['newIDNum'] = req.body.longURL; //long URL from request body
-  // res.redirect("urls/" + newIDNum);
-  res.redirect("urls/");
+  };
+ res.redirect("urls/");
 });
 
 //DELETE URL FROM DATABASE
@@ -170,25 +185,19 @@ app.post("/login", (req, res) => {
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password,10);
   if (email === "" || password === "") {
-    res.status(403).send('Error: Missing Login Details');
+    res.status(403).send('Error: Missing login details, go <a href="/login"> back </a>');
     return;
   } else {
     for (let user in users) {
       if (users[user].email === email) {
-        if(bcrypt.compareSync(password, hashedPassword)) {
+        if (bcrypt.compareSync(password, hashedPassword)) {
          req.session.user_id = users[user].id;
          res.redirect('/urls');
-        }
+        };
         return;
       }
     }
-  } res.status(403).send('Error - User and Password does not match');
-});
-
-//LOGOUT
-app.post("/logout", (req, res) => {
-  req.session = null
-  res.redirect("/urls");
+  } res.status(403).send('Error - Username and Password does not match, go <a href="/login"> back </a>');
 });
 
 //REGISTRATION
@@ -197,16 +206,14 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  console.log("req.body", req.body);
   const email = req.body.email;
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password,10);
   let newIDNum = generateRandomString();
-
   if (email === "" || password === "") {
-    res.status(400).send('Error 400: Missing Registration Details');
+    res.status(400).send('Error 400: Missing Registration Details, go <a href="/register"> back </a>');
   } else if (regCheck(req.body.email)) {
-    res.status(400).send('Error 400: User already exist');
+    res.status(400).send('Error 400: User already exist, go<a href="/register"> back </a>or<a href="/login"> Login </a>');
   } else {
     req.session.user_id = users[newIDNum];
 
@@ -217,11 +224,16 @@ app.post("/register", (req, res) => {
     };
 
     res.redirect("/urls");
-  } console.log("userDatabase", users)
+  }
+});
 
+//LOGOUT
+app.post("/logout", (req, res) => {
+  req.session = null;
+  res.redirect("/urls");
 });
 
 //PORT
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`TinyApp listening on port ${PORT}!`);
 });

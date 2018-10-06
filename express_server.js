@@ -155,14 +155,15 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  console.log("login", users);
+  const hashedPassword = bcrypt.hashSync(password,10);
   if (email === "" || password === "") {
     res.status(403).send('Error: Missing Login Details');
     return;
   } else {
     for (let user in users) {
-      if (users[user].email === email && users[user].password === password) {
-        res.cookie("user_id", users[user].id).redirect('/urls');
+      if (users[user].email === email) {
+        if(bcrypt.compareSync(password, hashedPassword)) {
+        } res.cookie("user_id", users[user].id).redirect('/urls');
         return;
       }
     }
@@ -182,9 +183,10 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  let email = req.body.email;
-  let password = req.body.password;
-  let newUserNum = generateRandomString();
+  const email = req.body.email;
+  const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password,10);
+  const newUserNum = generateRandomString();
   res.cookie("user_id", newUserNum);
 
   if (email === "" || password === "") {
@@ -195,9 +197,9 @@ app.post("/register", (req, res) => {
     users[newUserNum] = {
       id: newUserNum,
       email: email,
-      password: password
+      password: hashedPassword
     };
-  }
+  } console.log(users)
     res.redirect("/urls");
 });
 

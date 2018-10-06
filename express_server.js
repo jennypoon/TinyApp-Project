@@ -86,7 +86,7 @@ return randomNum;
 //ROOT PAGE
 app.get("/", (req, res) => {
   if (userCookieVerify(req.session.user_id)) {
-    res.redirect("urls/");
+    res.redirect("/urls");
     return;
   } res.redirect("/login");
 });
@@ -97,14 +97,7 @@ app.get("/urls", (req, res) => {
     urls: urlsForUser(req.session.user_id),
     userObj: users[req.session.user_id]
     };
-
-  if (userCookieVerify(req.session.user_id)) {
-    res.render("urls_index", templateVars);
-    return;
-  } else {
-    res.render("urls_index", templateVars);
-    return;
-  }
+  res.render("urls_index", templateVars);
 });
 
 //CREATE A NEW LINK
@@ -116,16 +109,17 @@ app.get("/urls/new", (req, res) => {
     res.render("urls_new", templateVars);
     return;
   } else {
-    res.send('Error: No Authorization. Please <a href="/login"> Login </a> or <a href="/register"> Register </a>');
+    res.redirect("/login");
     return;
   }
 });
 
 //UPDATING LONG URL
 app.get("/urls/:id", (req, res) => {
+  filteredDatabase = urlsForUser(req.session.user_id);
   if (userCookieVerify(req.session.user_id)) {
     let templateVars = {
-      urlData: urlDatabase[req.params.id],
+      urls: filteredDatabase[req.params.id],
       userObj: users[req.session.user_id]
    };
     res.render("urls_show", templateVars);

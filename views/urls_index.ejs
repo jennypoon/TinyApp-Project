@@ -4,20 +4,21 @@
 
 <body>
   <% include partials/_header %>
-  <a href="/urls/new"> Create a New Link </a>
+  <div style="display:inline-block; vertical-align: middle;">
+    <button onclick="location.href='/urls/new'">Create A New Link</button>
+  </div>
   <ul>
     <div>
       <% for (let indivUrl in urls) { %>
-    <li><%= indivUrl %> -> <a href="<%= urls[indivUrl] %>"><%= urls[indivUrl]['longURL'] %></a>
+      <li><%= indivUrl %> -> <a href="<%= urls[indivUrl] %>"><%= urls[indivUrl]['longURL'] %></a>
       <a href="/urls/<%= indivUrl %>">Edit Link</a>
       <form method="POST" style="display:inline;" action="/urls/<%= indivUrl %>/delete">
         <button>Delete Link</button>
       </form>
-    </li>
-    <% }; %>
-  </div>
-</ul>
-
-    <!-- Add your EJS code here -->
+      </li>
+      <% }; %>
+    </div>
+  </ul>
 </body>
+
 </html>

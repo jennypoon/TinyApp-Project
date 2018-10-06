@@ -1,11 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-  <body style="font-size:14px; padding:10px;">
-    <% include partials/_header %>
-    <form action="/urls" method="POST" style="margin:150px;">
-      <label for="longURL">Enter a URL:</label>
-      <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
-      <input type="submit" value="Submit">
-    </form>
-  </body>
+<head>
+  <title>TINYapp</title>
+  <style>
+   @import url('https://fonts.googleapis.com/css?family=Anton|Quicksand');
+
+    header {
+      background-color:#ECF3F3;
+      padding: 10px;
+      font-family: 'Anton', sans-serif;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 15px;
+      padding: 50px;
+    }
+
+    h1 {
+      font-size: 40px;
+    }
+  </style>
+</head>
+
+<body>
+  <% include partials/_header %>
+  <form action="/urls" method="POST">
+    <label for="longURL">Enter a URL:</label>
+    <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
+    <input type="submit" value="Submit">
+  </form>
+</body>
+
 </html>

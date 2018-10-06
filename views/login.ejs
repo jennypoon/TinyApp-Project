@@ -1,24 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-  <body style="font-size:15px; padding:50px;">
-    <header>
-    <h1>Tiny App Project - Login Page</h1>
-    </header>
-      <hr width="600px" align="left">
+
+<head>
+  <title>TINYapp</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Anton|Quicksand');
+
+    header {
+      background-color:#ECF3F3;
+      padding: 10px;
+      font-family: 'Anton', sans-serif;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 15px;
+      padding: 50px;
+    }
+
+    h1 {
+      font-size: 40px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>TinyApp</h1>
+  </header>
+  <h2> Login Page </h2>
+  <hr width="600px" align="left">
+
    <!-- Login Input Form -->
-      <form action="/login" method="POST">
-
-        <label for="email">Enter Email</label>
-        <input id="email" type="text" name="email" placeholder="Enter Email" style="width: 300px"> <br>
-
-        <label for="password">Enter Password</label>
-        <input id="password" type="password" name="password" placeholder="Enter Password" style="width: 300px"><br>
-
-        <button> Login </button> <br><br>
-
-        If you don't have a login, please <a href="/register"> Register </a> <br>
-      </form>
-  </body>
+  <form action="/login" method="POST">
+    <label for="email">Enter Email</label>
+    <input id="email" type="text" name="email" placeholder="Enter Email" style="width: 300px"> <br>
+    <label for="password">Enter Password</label>
+    <input id="password" type="password" name="password" placeholder="Enter Password" style="width: 300px"><br>
+    <button> Login </button> <br><br>
+      If you don't have a Login, please <a href="/register">Register</a><br>
+  </form>
+</body>
 </html>
 
 

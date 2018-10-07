@@ -1,4 +1,4 @@
-//MIDDLEWARE
+//STACK
 var express = require("express");
 var cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');

@@ -4,14 +4,14 @@
   <% include partials/_header %>
 
   <% if (!urls) { %>
-    Sorry this ID does not exist!
+    Sorry this ID does not exist! Go <a href="/urls">Back</a>!.
   <% } else { %>
-  <h1>ShortURL: <%= urls.shortURL %> </h1>
-  <form action="/urls/<%= urls.shortURL %>" method="POST">
-    <label for="newlongURL">Update URL:</label>
-    <input id="newlongURL" type="text" name="newURL" placeholder=" <%= urls.longURL %>" style="width: 300px">
-    <input type="submit" value="Submit">
-  </ul>
+    <h1>ShortURL: <%= urls.shortURL %> </h1>
+    <form action="/urls/<%= urls.shortURL %>" method="POST">
+      <label for="newlongURL">Update URL:</label>
+      <input id="newlongURL" type="text" name="newURL" placeholder=" <%= urls.longURL %>" style="width: 300px">
+      <input type="submit" value="Submit">
+    </form>
   <% }; %>
 </body>
 </html>

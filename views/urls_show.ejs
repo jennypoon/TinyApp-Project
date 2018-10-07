@@ -2,11 +2,16 @@
 <html lang="en">
 <body>
   <% include partials/_header %>
-  <h1>ShortURL: <%= urlData.shortURL %> </h1>
-  <form action="/urls/<%= urlData.shortURL %>" method="POST">
+
+  <% if (!urls) { %>
+    Sorry this ID does not exist!
+  <% } else { %>
+  <h1>ShortURL: <%= urls.shortURL %> </h1>
+  <form action="/urls/<%= urls.shortURL %>" method="POST">
     <label for="newlongURL">Update URL:</label>
-    <input id="newlongURL" type="text" name="newURL" placeholder=" <%= urlData.longURL %>" style="width: 300px">
+    <input id="newlongURL" type="text" name="newURL" placeholder=" <%= urls.longURL %>" style="width: 300px">
     <input type="submit" value="Submit">
   </ul>
+  <% }; %>
 </body>
 </html>

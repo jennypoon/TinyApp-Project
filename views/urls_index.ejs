@@ -4,14 +4,19 @@
 
 <body>
   <% include partials/_header %>
+  <% if (userObj) { %>
   <div style="display:inline-block; vertical-align: middle;">
     <button onclick="location.href='/urls/new'">Create A New Link</button>
   </div>
   <ul>
     <div>
       <% for (let indivUrl in urls) { %>
-      <li><%= indivUrl %> -> <a href="<%= urls[indivUrl] %>"><%= urls[indivUrl]['longURL'] %></a>
-      <a href="/urls/<%= indivUrl %>">Edit Link</a>
+      <li><%= indivUrl %> -> <a href="<%= urls[indivUrl].longURL %>"><%= urls[indivUrl]['longURL'] %></a>
+
+      <form method="GET" style="display:inline;" action="/urls/<%= indivUrl %>">
+        <button>Edit Link</button>
+      </form>
+
       <form method="POST" style="display:inline;" action="/urls/<%= indivUrl %>/delete">
         <button>Delete Link</button>
       </form>
@@ -19,6 +24,7 @@
       <% }; %>
     </div>
   </ul>
+  <% }; %>
 </body>
 
 </html>

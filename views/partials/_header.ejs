@@ -38,13 +38,14 @@
   <% if (userObj) { %>
   <div style="display:inline-block; vertical-align: middle;">
     <form action ="/logout" method="POST">
-      <b>You are currently logged in as: <%= userObj.email %></b>
+      Hello! You are currently logged in as: <b><%= userObj.email %></b>
       <button> Logout </button> <br>
    </form>
   </div>
 
   <% } else { %>
   <div style="display:inline-block; vertical-align: middle;">
+    Hi ! Please sign in or register to access your home page
     <button onclick="location.href='/register'">Register</button>
     <button onclick="location.href='/login'">Login</button>
   </div>

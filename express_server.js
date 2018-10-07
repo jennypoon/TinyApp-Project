@@ -5,15 +5,16 @@ const bcrypt = require('bcrypt');
 var app = express();
 var PORT = 8080;
 
-//COOKIE
+
 app.use(cookieSession({
   name: 'session',
   keys: ['happy-days']
 }))
 
-//POST Body Parser
+
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
+
 
 app.set("view engine", "ejs");
 
@@ -44,19 +45,19 @@ const users = {
   }
 }
 
-//=== VERIFICATION - check email in database
+//=== VERIFICATION - check for email in database
 function regCheck(email) {
-  for(newUserNum in users) {
-    if (email === users[newUserNum]['email']){
-      return true
+  for (let newUserNum in users) {
+    if (email === users[newUserNum]['email']) {
+      return true;
     }
-  } return false
+  } return false;
 }
 
 //=== VERIFICATION - Check cookie match User ID
 function userCookieVerify(cookie) {
-  for (user in users) {
-    if (cookie == users[user]['id']) {
+  for (let user in users) {
+    if (cookie === users[user]['id']) {
       return true;
     }
   } return false;
@@ -65,7 +66,7 @@ function userCookieVerify(cookie) {
 //=== Filtered User-Specific URL Database
 function urlsForUser(id) {
   let filteredUrlDatabase = {};
-  for (url in urlDatabase) {
+  for (let url in urlDatabase) {
     if (id === urlDatabase[url]['createdBy']) {
       filteredUrlDatabase[url] = urlDatabase[url];
     }
@@ -74,13 +75,12 @@ function urlsForUser(id) {
 
 //=== RANDOM NUMBER GENERATOR
 function generateRandomString() {
-let randomNum = "";
+  let randomNum = "";
   const source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
   for (let i = 0; i < 6; i++) {
     randomNum += source.charAt(Math.floor(Math.random() * source.length));
   }
-return randomNum;
+  return randomNum;
 }
 
 //ROOT PAGE
@@ -121,7 +121,7 @@ app.get("/urls/:id", (req, res) => {
     let templateVars = {
       urls: filteredDatabase[req.params.id],
       userObj: users[req.session.user_id]
-   };
+    };
     res.render("urls_show", templateVars);
     return;
   } else {
@@ -159,7 +159,7 @@ app.post("/urls", (req, res) => {
     longURL: req.body.longURL,
     createdBy: req.session.user_id
   };
- res.redirect("urls/");
+  res.redirect("urls/");
 });
 
 //DELETE URL FROM DATABASE
@@ -171,32 +171,42 @@ app.post("/urls/:id/delete", (req, res) => {
 
 //LOGIN
 app.get("/login", (req, res) => {
-  res.render("login");
+  if (userCookieVerify(req.session.user_id)) {
+    res.redirect('/urls');
+  } else {
+    res.render("login");
+  }
 });
 
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const hashedPassword = bcrypt.hashSync(password,10);
   if (email === "" || password === "") {
     res.status(403).send('Error: Missing login details, go <a href="/login"> back </a>');
     return;
   } else {
     for (let user in users) {
       if (users[user].email === email) {
+        const hashedPassword = users[user].password;
         if (bcrypt.compareSync(password, hashedPassword)) {
          req.session.user_id = users[user].id;
          res.redirect('/urls');
-        };
-        return;
+          return;
+        } else {
+          res.status(403).send('Error - Username and Password does not match, go <a href="/login"> back </a>');
+        }
       }
     }
-  } res.status(403).send('Error - Username and Password does not match, go <a href="/login"> back </a>');
+  }
 });
 
 //REGISTRATION
 app.get("/register", (req, res) => {
-  res.render("register");
+  if (userCookieVerify(req.session.user_id)) {
+    res.redirect('/urls');
+  } else {
+    res.render("register");
+  }
 });
 
 app.post("/register", (req, res) => {

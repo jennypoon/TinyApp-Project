@@ -181,6 +181,7 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  console.log(typeof password)
   if (email === "" || password === "") {
     res.status(403).send('Error: Missing login details, go <a href="/login"> back </a>');
     return;
